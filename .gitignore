@@ -47,3 +47,4 @@ Temporary Items
 .apdisk
 connect_str.txt
 TODO.txt
+__pycache__/
