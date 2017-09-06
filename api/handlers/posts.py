@@ -38,7 +38,8 @@ class PostsHandler(RequestHandler):
             self.send_error(400)
         else:
             post = Posts(header, content, author)
-            QueryPosts.add(post, categories)
+            id = QueryPosts.add(post, categories)
+            self.write({'id':id})
 
     def put(self, post_id = None):
         header = self.get_argument('header', default = None)

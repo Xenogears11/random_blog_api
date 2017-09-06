@@ -13,14 +13,17 @@ class QueryPosts():
             category = session.query(Categories).get(id)
             post.categories.append(category)
 
+        id = post.id
+
         session.commit()
         session.close()
+        return id
 
     def get_all():
         session = DBSession()
 
         posts = session.query(Posts).filter(Posts.is_deleted == False).\
-                order_by(Posts.id).all()
+                order_by(Posts.id.desc()).all()
 
         session.close()
         return posts
@@ -104,6 +107,6 @@ class QueryCategories():
         session = DBSession()
 
         session.add(category)
-        
+
         session.commit()
         session.close()
