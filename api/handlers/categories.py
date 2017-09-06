@@ -4,7 +4,7 @@ from database.query import QueryPosts, QueryCategories
 
 class CategoriesHandler(RequestHandler):
     def get(self, category_id = None):
-        if id == None:
+        if category_id == None:
             ctgs = QueryCategories.get_all()
 
             categories = []
