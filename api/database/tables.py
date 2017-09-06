@@ -6,8 +6,8 @@ from database.database import Base
 
 #association table
 posts_to_categories_table = Table('posts_to_categories', Base.metadata,
-    Column('posts_id', Integer, ForeignKey('posts.id')),
-    Column('category', Integer, ForeignKey('categories.id'))
+    Column('post_id', Integer, ForeignKey('posts.id')),
+    Column('category_id', Integer, ForeignKey('categories.id'))
 )
 
 class Posts(Base):
@@ -57,8 +57,8 @@ class Categories(Base):
 
     posts = relationship('Posts',
                          secondary = posts_to_categories_table,
-                         primaryjoin = "Categories.id == posts_to_categories.c.category",
-                         secondaryjoin = "and_(posts_to_categories.c.posts_id == Posts.id, "
+                         primaryjoin = "Categories.id == posts_to_categories.c.category_id",
+                         secondaryjoin = "and_(posts_to_categories.c.post_id == Posts.id, "
                                          "Posts.is_deleted == False)"
                          )
 
