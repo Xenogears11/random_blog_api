@@ -11,7 +11,7 @@ class PostsHandler(RequestHandler):
                 result = QueryPosts.get_all()
             else:
                 try:
-                    result = QueryCategories.get_posts(int(category_id))
+                    result = QueryPosts.get_by_category(int(category_id))
                 except:
                     self.send_error(404)
 

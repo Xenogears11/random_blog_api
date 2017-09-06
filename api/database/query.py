@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
 from sqlalchemy.orm import joinedload
 from database.database import DBSession
-from database.tables import Posts, Categories
+from database.tables import Posts, Categories, posts_to_categories_table
 from datetime import datetime
 
 class QueryPosts():
@@ -24,6 +24,16 @@ class QueryPosts():
 
         posts = session.query(Posts).filter(Posts.is_deleted == False).\
                 order_by(Posts.id.desc()).all()
+
+        session.close()
+        return posts
+
+    def get_by_category(id):
+        session = DBSession()
+
+        posts = session.query(Posts).join(Posts.categories).\
+               filter(Categories.id == id, Posts.is_deleted == False).\
+               order_by(Posts.id.desc()).all()
 
         session.close()
         return posts
@@ -91,17 +101,6 @@ class QueryCategories():
 
         session.close()
         return result
-
-    def get_posts(id):
-        session = DBSession()
-
-        category = session.query(Categories).\
-                   options(joinedload('posts').joinedload('categories')).\
-                   get(id)
-        posts = category.posts
-
-        session.close()
-        return posts
 
     def add(category):
         session = DBSession()
