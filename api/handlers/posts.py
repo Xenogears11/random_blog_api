@@ -59,3 +59,10 @@ class PostsHandler(RequestHandler):
             QueryPosts.delete(post_id)
         except:
             self.send_error(400)
+
+class PostsRestore(RequestHandler):
+    def put(self, post_id = None):
+        try:
+            QueryPosts.restore(post_id)
+        except:
+            self.send_error(400)

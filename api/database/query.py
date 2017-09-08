@@ -85,6 +85,19 @@ class QueryPosts():
         session.commit()
         session.close()
 
+    def restore(post_id):
+        session = DBSession()
+
+        post = session.query(Posts).filter(Posts.id == post_id,
+               Posts.is_deleted == True).one()
+
+        post.modification_date = datetime.now().replace(microsecond=0).isoformat(' ')
+        post.deletion_date = None
+        post.is_deleted = False
+
+        session.commit()
+        session.close()
+
 class QueryCategories():
     def get(id):
         session = DBSession()
