@@ -39,16 +39,27 @@ class Posts(Base):
         for c in self.categories:
             ctgs.append(c.category)
 
-        return {
+        result = {
             'id' : self.id,
             'header' : self.header,
             'content' : self.content,
-            'creation_date' : str(self.creation_date),
-            'modification_date' : str(self.modification_date),
-            'deletion_date' : str(self.deletion_date),
+            'creation_date' : None,
+            'modification_date' : None,
+            'deletion_date' : None,
             'author' : self.author,
             'categories' : ctgs
         }
+
+        if self.creation_date != None:
+            result['creation_date'] = self.creation_date.strftime('%d %B %Y - %H:%M')
+
+        if self.modification_date != None:
+            result['modification_date'] = self.modification_date.strftime('%d %B %Y - %H:%M')
+
+        if self.deletion_date != None:
+            result['deletion_date'] = self.deletion_date.strftime('%d %B %Y - %H:%M')
+
+        return result
 
 class Categories(Base):
     __tablename__ = 'categories'
