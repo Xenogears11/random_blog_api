@@ -11,7 +11,7 @@ class PostsHandler(RequestHandler):
                 result = QueryPosts.get_all()
             else:
                 try:
-                    result = QueryCategories.get_posts(int(category_id))
+                    result = QueryPosts.get_by_category(int(category_id))
                 except:
                     self.send_error(404)
 
@@ -38,7 +38,8 @@ class PostsHandler(RequestHandler):
             self.send_error(400)
         else:
             post = Posts(header, content, author)
-            QueryPosts.add(post, categories)
+            id = QueryPosts.add(post, categories)
+            self.write({'id':id})
 
     def put(self, post_id = None):
         header = self.get_argument('header', default = None)
@@ -56,5 +57,12 @@ class PostsHandler(RequestHandler):
     def delete(self, post_id = None):
         try:
             QueryPosts.delete(post_id)
+        except:
+            self.send_error(400)
+
+class PostsRestore(RequestHandler):
+    def put(self, post_id = None):
+        try:
+            QueryPosts.restore(post_id)
         except:
             self.send_error(400)

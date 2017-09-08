@@ -57,9 +57,6 @@ class Categories(Base):
 
     posts = relationship('Posts',
                          secondary = posts_to_categories_table,
-                         primaryjoin = "Categories.id == posts_to_categories.c.category_id",
-                         secondaryjoin = "and_(posts_to_categories.c.post_id == Posts.id, "
-                                         "Posts.is_deleted == False)"
                          )
 
     def __init__(self, category = None, id = None):

@@ -10,7 +10,7 @@ class AllHandler(RequestHandler):
             ps = QueryPosts.get_all()
         else:
             category = QueryCategories.get(category_id)
-            ps = QueryCategories.get_posts(category_id)
+            ps = QueryPosts.get_by_category(category_id)
             result['category'] = category.toDict()
 
         ctgs = QueryCategories.get_all()

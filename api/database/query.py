@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
 from sqlalchemy.orm import joinedload
 from database.database import DBSession
-from database.tables import Posts, Categories
+from database.tables import Posts, Categories, posts_to_categories_table
 from datetime import datetime
 
 class QueryPosts():
@@ -13,14 +13,27 @@ class QueryPosts():
             category = session.query(Categories).get(id)
             post.categories.append(category)
 
+        id = post.id
+
         session.commit()
         session.close()
+        return id
 
     def get_all():
         session = DBSession()
 
         posts = session.query(Posts).filter(Posts.is_deleted == False).\
-                order_by(Posts.id).all()
+                order_by(Posts.id.desc()).all()
+
+        session.close()
+        return posts
+
+    def get_by_category(id):
+        session = DBSession()
+
+        posts = session.query(Posts).join(Posts.categories).\
+               filter(Categories.id == id, Posts.is_deleted == False).\
+               order_by(Posts.id.desc()).all()
 
         session.close()
         return posts
@@ -72,6 +85,19 @@ class QueryPosts():
         session.commit()
         session.close()
 
+    def restore(post_id):
+        session = DBSession()
+
+        post = session.query(Posts).filter(Posts.id == post_id,
+               Posts.is_deleted == True).one()
+
+        post.modification_date = datetime.now().replace(microsecond=0).isoformat(' ')
+        post.deletion_date = None
+        post.is_deleted = False
+
+        session.commit()
+        session.close()
+
 class QueryCategories():
     def get(id):
         session = DBSession()
@@ -89,21 +115,10 @@ class QueryCategories():
         session.close()
         return result
 
-    def get_posts(id):
-        session = DBSession()
-
-        category = session.query(Categories).\
-                   options(joinedload('posts').joinedload('categories')).\
-                   get(id)
-        posts = category.posts
-
-        session.close()
-        return posts
-
     def add(category):
         session = DBSession()
 
         session.add(category)
-        
+
         session.commit()
         session.close()
