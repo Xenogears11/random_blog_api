@@ -1,6 +1,6 @@
 import tornado.ioloop
 import tornado.web
-from handlers.posts import PostsHandler, PostsRestore
+from handlers.posts import PostsHandler, PostsRestore, PostsParamHandler
 from handlers.categories import CategoriesHandler
 from handlers.all import AllHandler
 from handlers.blog import HomeHandler, CategoryHandler, PostEditHandler

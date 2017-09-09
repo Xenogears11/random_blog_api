@@ -66,3 +66,19 @@ class PostsRestore(RequestHandler):
             QueryPosts.restore(post_id)
         except:
             self.send_error(400)
+
+class PostsParamHandler(RequestHandler):
+    def get(self):
+        quantity = self.get_argument('quantity', default = None)
+        from_id = self.get_argument('from_id', default = None)
+
+        try:
+            result = QueryPosts.get_param(from_id, quantity)
+        except:
+            self.send_error(404)
+
+        posts = []
+        for post in result:
+            posts.append(post.toDict())
+
+        self.write({'posts' : posts})

@@ -98,6 +98,21 @@ class QueryPosts():
         session.commit()
         session.close()
 
+    def get_param(from_id, quantity):
+        session = DBSession()
+
+        if from_id == None:
+            posts = session.query(Posts).filter(Posts.is_deleted == False).\
+            order_by(Posts.id.desc()).\
+            limit(quantity).all()
+        else:
+            posts = session.query(Posts).filter(Posts.id <= from_id, Posts.is_deleted == False).\
+            order_by(Posts.id.desc()).\
+            limit(quantity).all()
+
+        session.close()
+        return posts
+
 class QueryCategories():
     def get(id):
         session = DBSession()

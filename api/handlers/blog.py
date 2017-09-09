@@ -4,9 +4,12 @@ from database.query import QueryPosts, QueryCategories
 
 class HomeHandler(RequestHandler):
     def get(self):
+        from_id = self.get_argument('from_id', default = None)
+        quantity = self.get_argument('quantity', default = None)
+
         result = {}
 
-        ps = QueryPosts.get_all()
+        ps = QueryPosts.get_param(from_id, quantity)
         ctgs = QueryCategories.get_all()
 
         posts = []
