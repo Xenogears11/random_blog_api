@@ -11,7 +11,7 @@ class PostsHandler(RequestHandler):
                 result = QueryPosts.get_all()
             else:
                 try:
-                    result = QueryPosts.get_by_category(int(category_id))
+                    result = QueryPosts.get_all_by_category(int(category_id))
                 except:
                     self.send_error(404)
 
@@ -73,7 +73,7 @@ class PostsParamHandler(RequestHandler):
         from_id = self.get_argument('from_id', default = None)
 
         try:
-            result = QueryPosts.get_param(from_id, quantity)
+            result = QueryPosts.get_custom(quantity)
         except:
             self.send_error(404)
 

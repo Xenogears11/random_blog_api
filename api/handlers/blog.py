@@ -6,11 +6,17 @@ class HomeHandler(RequestHandler):
     def get(self):
         from_id = self.get_argument('from_id', default = None)
         quantity = self.get_argument('quantity', default = None)
+        previous = self.get_argument('previous', default = None)
+        if previous == None:
+            previous = False
+        else:
+            previous = True
 
         result = {}
 
-        ps = QueryPosts.get_param(from_id, quantity)
+        ps = QueryPosts.get_custom(quantity, from_id, previous)
         ctgs = QueryCategories.get_all()
+        first_last_ids = QueryPosts.get_first_last_posts()
 
         posts = []
         for post in ps:
@@ -22,15 +28,26 @@ class HomeHandler(RequestHandler):
             categories.append(category.toDict())
         result['categories'] = categories
 
+        result['first_last_posts'] = first_last_ids
+
         self.write(result)
 
 class CategoryHandler(RequestHandler):
     def get(self, id = None):
+        from_id = self.get_argument('from_id', default = None)
+        quantity = self.get_argument('quantity', default = None)
+        previous = self.get_argument('previous', default = None)
+        if previous == None:
+            previous = False
+        else:
+            previous = True
+
         result = {}
 
         category = QueryCategories.get(id)
-        ps = QueryPosts.get_by_category(id)
+        ps = QueryPosts.get_custom_by_category(id, quantity, from_id, previous)
         ctgs = QueryCategories.get_all()
+        first_last_ids = QueryCategories.get_first_last_posts(id)
 
         result['category'] = category.toDict()
 
@@ -43,6 +60,8 @@ class CategoryHandler(RequestHandler):
         for category in ctgs:
             categories.append(category.toDict())
         result['categories'] = categories
+
+        result['first_last_posts'] = first_last_ids
 
         self.write(result)
 

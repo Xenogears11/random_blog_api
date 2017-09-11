@@ -28,7 +28,7 @@ class QueryPosts():
         session.close()
         return posts
 
-    def get_by_category(id):
+    def get_all_by_category(id):
         session = DBSession()
 
         posts = session.query(Posts).join(Posts.categories).\
@@ -98,20 +98,77 @@ class QueryPosts():
         session.commit()
         session.close()
 
-    def get_param(from_id, quantity):
+    def get_custom(quantity, from_id = None, previous = False):
         session = DBSession()
 
         if from_id == None:
             posts = session.query(Posts).filter(Posts.is_deleted == False).\
             order_by(Posts.id.desc()).\
             limit(quantity).all()
+
         else:
-            posts = session.query(Posts).filter(Posts.id <= from_id, Posts.is_deleted == False).\
-            order_by(Posts.id.desc()).\
-            limit(quantity).all()
+            if not previous:
+                posts = session.query(Posts).filter(Posts.id <= int(from_id), Posts.is_deleted == False).\
+                order_by(Posts.id.desc()).\
+                limit(int(quantity)).\
+                all()
+            else:
+                posts = session.query(Posts).filter(Posts.id >= int(from_id), Posts.is_deleted == False).\
+                order_by(Posts.id).\
+                limit(int(quantity)).\
+                from_self().\
+                order_by(Posts.id.desc()).\
+                all()
 
         session.close()
         return posts
+
+    def get_custom_by_category(category_id, quantity, from_id = None, previous = False):
+        session = DBSession()
+
+        if from_id == None:
+            posts = session.query(Posts).join(Posts.categories).\
+            filter(Categories.id == category_id, Posts.is_deleted == False).\
+            order_by(Posts.id.desc()).\
+            limit(int(quantity)).all()
+
+        else:
+            if not previous:
+                posts = session.query(Posts).join(Posts.categories).\
+                filter(Categories.id == category_id,
+                       Posts.id <= int(from_id),
+                       Posts.is_deleted == False).\
+                order_by(Posts.id.desc()).\
+                limit(int(quantity)).\
+                all()
+            else:
+                posts = session.query(Posts).join(Posts.categories).\
+                filter(Categories.id == category_id,
+                       Posts.id >= int(from_id),
+                       Posts.is_deleted == False).\
+                order_by(Posts.id).\
+                limit(int(quantity)).\
+                from_self().\
+                order_by(Posts.id.desc()).\
+                all()
+
+        session.close()
+        return posts
+
+    def get_first_last_posts():
+        session = DBSession()
+
+        first_id = session.query(Posts).filter(Posts.is_deleted == False).\
+        order_by(Posts.id).first().id
+
+        last_id = session.query(Posts).filter(Posts.is_deleted == False).\
+        order_by(Posts.id.desc()).first().id
+
+        session.close()
+        return {
+            'first_id' : first_id,
+            'last_id' : last_id
+        }
 
 class QueryCategories():
     def get(id):
@@ -137,3 +194,20 @@ class QueryCategories():
 
         session.commit()
         session.close()
+
+    def get_first_last_posts(id):
+        session = DBSession()
+
+        first_id = session.query(Posts).join(Posts.categories).\
+        filter(Categories.id == id, Posts.is_deleted == False).\
+        order_by(Posts.id).first().id
+
+        last_id = session.query(Posts).join(Posts.categories).\
+        filter(Categories.id == id, Posts.is_deleted == False).\
+        order_by(Posts.id.desc()).first().id
+
+        session.close()
+        return {
+            'first_id' : first_id,
+            'last_id' : last_id
+        }

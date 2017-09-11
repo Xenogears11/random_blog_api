@@ -1,9 +1,6 @@
 import tornado.ioloop
 import tornado.web
-from handlers.posts import PostsHandler, PostsRestore, PostsParamHandler
-from handlers.categories import CategoriesHandler
-from handlers.all import AllHandler
-from handlers.blog import HomeHandler, CategoryHandler, PostEditHandler
+from handlers import posts, categories, all, blog
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -12,16 +9,16 @@ class MainHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         (r'/', MainHandler),
-        (r'/posts', PostsHandler),
-        (r'/posts/(\d+)', PostsHandler),
-        (r'/posts/(\d+)/restore', PostsRestore),
-        (r'/categories', CategoriesHandler),
-        (r'/categories/(\d+)', CategoriesHandler),
-        (r'/all', AllHandler),
-        (r'/all/(\d+)', AllHandler),
-        (r'/blog/home', HomeHandler),
-        (r'/blog/category/(\d+)', CategoryHandler),
-        (r'/blog/edit_post/(\d+)', PostEditHandler)
+        (r'/posts', posts.PostsHandler),
+        (r'/posts/(\d+)', posts.PostsHandler),
+        (r'/posts/(\d+)/restore', posts.PostsRestore),
+        (r'/categories', categories.CategoriesHandler),
+        (r'/categories/(\d+)', categories.CategoriesHandler),
+        (r'/all', all.AllHandler),
+        (r'/all/(\d+)', all.AllHandler),
+        (r'/blog/home', blog.HomeHandler),
+        (r'/blog/category/(\d+)', blog.CategoryHandler),
+        (r'/blog/edit_post/(\d+)', blog.PostEditHandler)
     ], debug = True)
 
 
