@@ -1,9 +1,29 @@
+'''Custom handlers for Random blog.'''
+
 from tornado.web import RequestHandler
 from database.tables import Posts, Categories
 from database.query import QueryPosts, QueryCategories
 
 class HomeHandler(RequestHandler):
+    '''Home page.'''
+
     def get(self):
+        '''Return data for Home page.
+
+        Request arguments:
+        from_id -- start from this post
+        quantity -- quantity of posts
+        previous --
+            if not passed - returns next(older) posts
+            if passed any value - return previous(newer) posts
+
+        Data:
+        - 'posts' : list of posts
+        - 'categories' : list of all categories
+        - 'first_last_posts' : id of the first and the last posts
+        '''
+
+        #get arguments
         from_id = self.get_argument('from_id', default = None)
         quantity = self.get_argument('quantity', default = None)
         previous = self.get_argument('previous', default = None)
@@ -12,28 +32,53 @@ class HomeHandler(RequestHandler):
         else:
             previous = True
 
-        result = {}
-
+        #get data from db
         ps = QueryPosts.get_custom(quantity, from_id, previous)
         ctgs = QueryCategories.get_all()
-        first_last_ids = QueryPosts.get_first_last_posts()
+        first_last_posts = QueryPosts.get_first_last_posts()
+
+        #form response
+        response = {}
 
         posts = []
         for post in ps:
             posts.append(post.toDict())
-        result['posts'] = posts
+        response['posts'] = posts
 
         categories = []
         for category in ctgs:
             categories.append(category.toDict())
-        result['categories'] = categories
+        response['categories'] = categories
 
-        result['first_last_posts'] = first_last_ids
+        response['first_last_posts'] = first_last_posts
 
-        self.write(result)
+        #send response
+        self.write(response)
 
 class CategoryHandler(RequestHandler):
+    '''Category/<id> page.'''
+
     def get(self, id = None):
+        '''Return data for Category/<id> page.
+
+        Arguments:
+        id -- id of the category
+
+        Request arguments:
+        from_id -- start from this post
+        quantity -- quantity of posts
+        previous --
+            if not passed - returns next(older) posts
+            if passed any value - return previous(newer) posts
+
+        Data:
+        - 'category' : requested category
+        - 'posts' : list of posts in the category
+        - 'categories' : list of all categories
+        - 'first_last_posts' : id of the first and the last posts in the category
+        '''
+
+        #get arguments
         from_id = self.get_argument('from_id', default = None)
         quantity = self.get_argument('quantity', default = None)
         previous = self.get_argument('previous', default = None)
@@ -42,41 +87,59 @@ class CategoryHandler(RequestHandler):
         else:
             previous = True
 
-        result = {}
-
+        #get data from db
         category = QueryCategories.get(id)
         ps = QueryPosts.get_custom_by_category(id, quantity, from_id, previous)
         ctgs = QueryCategories.get_all()
-        first_last_ids = QueryCategories.get_first_last_posts(id)
+        first_last_posts = QueryCategories.get_first_last_posts(id)
 
-        result['category'] = category.toDict()
+        #form response
+        response = {}
+
+        response['category'] = category.toDict()
 
         posts = []
         for post in ps:
             posts.append(post.toDict())
-        result['posts'] = posts
+        response['posts'] = posts
 
         categories = []
         for category in ctgs:
             categories.append(category.toDict())
-        result['categories'] = categories
+        response['categories'] = categories
 
-        result['first_last_posts'] = first_last_ids
+        response['first_last_posts'] = first_last_posts
 
-        self.write(result)
+        #send response
+        self.write(response)
 
 class PostEditHandler(RequestHandler):
-    def get(self, id = None):
-        result = {}
+    '''Edit post page.'''
 
+    def get(self, id = None):
+        '''Return data for Edit post page.
+
+        Arguments:
+        id -- id of the post
+
+        Data:
+        - 'post' : post data
+        - 'categories' : list of all categories
+        '''
+
+        #get data from db
         post = QueryPosts.get(id)
         ctgs = QueryCategories.get_all()
 
-        result['post'] = post.toDict()
+        #form response
+        response = {}
+
+        response['post'] = post.toDict()
 
         categories = []
         for category in ctgs:
             categories.append(category.toDict())
-        result['categories'] = categories
+        response['categories'] = categories
 
-        self.write(result)
+        #send response
+        self.write(response)

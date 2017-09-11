@@ -1,10 +1,34 @@
+'''Handlers for categories table.'''
+
 from tornado.web import RequestHandler
 from database.tables import Posts, Categories
 from database.query import QueryPosts, QueryCategories
 
 class CategoriesHandler(RequestHandler):
-    def get(self, category_id = None):
-        if category_id == None:
+    '''Handler for categories table.
+
+    Methods:
+    - post
+    - get
+    '''
+
+    def post(self):
+        '''Add new category
+
+        Request arguments:
+        category -- new category name
+        '''
+
+        category = self.get_argument('category')
+        ctg = Categories(category)
+        QueryCategories.add(ctg)
+
+
+    def get(self, id = None):
+        '''Return category by id or list of categories(if no id passed).'''
+
+        #return all categories if no id passed
+        if id == None:
             ctgs = QueryCategories.get_all()
 
             categories = []
@@ -13,14 +37,10 @@ class CategoriesHandler(RequestHandler):
 
             self.write({'categories': categories})
 
+        #return category by id
         else:
             try:
-                category = QueryCategories.get(category_id)
+                category = QueryCategories.get(id)
                 self.write(category.toDict())
             except:
                 self.send_error(404)
-
-    def post(self):
-        category = self.get_argument('category')
-        ctg = Categories(category)
-        QueryCategories.add(ctg)
