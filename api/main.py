@@ -1,6 +1,7 @@
 import tornado.ioloop
 import tornado.web
 from handlers import posts, categories, blog
+from tornado.log import enable_pretty_logging
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -26,6 +27,7 @@ def make_app():
 if __name__ == "__main__":
     with open('res/help.txt', 'r', encoding = 'utf-8') as file:
         help_page = file.read()
+    enable_pretty_logging()
     app = make_app()
     app.listen(8888)
     print('Ready')

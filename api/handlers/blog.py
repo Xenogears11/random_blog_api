@@ -13,9 +13,9 @@ class HomeHandler(RequestHandler):
         Request arguments:
         from_id -- start from this post
         quantity -- quantity of posts
-        previous --
-            if not passed - returns next(older) posts
-            if passed any value - return previous(newer) posts
+        newer --
+            if not passed - returns older posts
+            if passed any value - return newer posts
 
         Data:
         - 'posts' : list of posts
@@ -26,14 +26,14 @@ class HomeHandler(RequestHandler):
         #get arguments
         from_id = self.get_argument('from_id', default = None)
         quantity = self.get_argument('quantity', default = None)
-        previous = self.get_argument('previous', default = None)
-        if previous == None:
-            previous = False
+        newer = self.get_argument('newer', default = None)
+        if newer == None:
+            newer = False
         else:
-            previous = True
+            newer = True
 
         #get data from db
-        ps = QueryPosts.get_custom(quantity, from_id, previous)
+        ps = QueryPosts.get_custom(quantity, from_id, newer)
         ctgs = QueryCategories.get_all()
         first_last_posts = QueryPosts.get_first_last_posts()
 
@@ -67,9 +67,9 @@ class CategoryHandler(RequestHandler):
         Request arguments:
         from_id -- start from this post
         quantity -- quantity of posts
-        previous --
-            if not passed - returns next(older) posts
-            if passed any value - return previous(newer) posts
+        newer --
+            if not passed - returns older posts
+            if passed any value - return newer posts
 
         Data:
         - 'category' : requested category
@@ -81,15 +81,15 @@ class CategoryHandler(RequestHandler):
         #get arguments
         from_id = self.get_argument('from_id', default = None)
         quantity = self.get_argument('quantity', default = None)
-        previous = self.get_argument('previous', default = None)
-        if previous == None:
-            previous = False
+        newer = self.get_argument('newer', default = None)
+        if newer == None:
+            newer = False
         else:
-            previous = True
+            newer = True
 
         #get data from db
         category = QueryCategories.get(id)
-        ps = QueryPosts.get_custom_by_category(id, quantity, from_id, previous)
+        ps = QueryPosts.get_custom_by_category(id, quantity, from_id, newer)
         ctgs = QueryCategories.get_all()
         first_last_posts = QueryCategories.get_first_last_posts(id)
 

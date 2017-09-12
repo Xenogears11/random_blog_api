@@ -84,15 +84,15 @@ class QueryPosts():
         return post
 
 
-    def get_custom(quantity, from_id = None, previous = False):
+    def get_custom(quantity, from_id = None, newer = False):
         '''Return list of posts by custom rules.
 
         Arguments:
         quantity -- quantity of posts
         from_id -- start from this post
-        previous --
-            if False - returns next(older) posts
-            if True - return previous(newer) posts
+        newer --
+            if False - returns older posts
+            if True - return newer posts
         '''
 
         session = DBSession()
@@ -106,14 +106,14 @@ class QueryPosts():
         #start from custom post
         else:
 
-            #get next(older) posts
-            if not previous:
+            #get older posts
+            if not newer:
                 posts = session.query(Posts).filter(Posts.id <= int(from_id), Posts.is_deleted == False).\
                 order_by(Posts.id.desc()).\
                 limit(int(quantity)).\
                 all()
 
-            #get previous(newer) posts
+            #get newer posts
             else:
                 posts = session.query(Posts).filter(Posts.id >= int(from_id), Posts.is_deleted == False).\
                 order_by(Posts.id).\
@@ -126,16 +126,16 @@ class QueryPosts():
         return posts
 
 
-    def get_custom_by_category(category_id, quantity, from_id = None, previous = False):
+    def get_custom_by_category(category_id, quantity, from_id = None, newer = False):
         '''Return list of posts by custom rules in the selected category.
 
         Arguments:
         category_id -- id of the category
         quantity -- quantity of posts
         from_id -- start from this post
-        previous --
-            if False - returns next(older) posts
-            if True - return previous(newer) posts
+        newer --
+            if False - returns older posts
+            if True - return newer posts
         '''
 
         session = DBSession()
@@ -150,8 +150,8 @@ class QueryPosts():
         #start from custom post
         else:
 
-            #get next(older) posts
-            if not previous:
+            #get older posts
+            if not newer:
                 posts = session.query(Posts).join(Posts.categories).\
                 filter(Categories.id == category_id,
                        Posts.id <= int(from_id),
@@ -160,7 +160,7 @@ class QueryPosts():
                 limit(int(quantity)).\
                 all()
 
-            #get previous(newer) posts
+            #get newer posts
             else:
                 posts = session.query(Posts).join(Posts.categories).\
                 filter(Categories.id == category_id,
