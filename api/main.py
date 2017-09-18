@@ -20,7 +20,7 @@ def make_app():
         (r'/blog/home', blog.HomeHandler),
         (r'/blog/category/(\d+)', blog.CategoryHandler),
         (r'/blog/edit_post/(\d+)', blog.PostEditHandler)
-    ], debug = True)
+    ], debug = False)
 
 
 #run app
