@@ -1,17 +1,22 @@
+'''SQLAlchemy table classes.'''
+
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database.database import Base
 
-#association table
+#Association table
 posts_to_categories_table = Table('posts_to_categories', Base.metadata,
     Column('post_id', Integer, ForeignKey('posts.id')),
     Column('category_id', Integer, ForeignKey('categories.id'))
 )
 
 class Posts(Base):
+    '''Table posts'''
     __tablename__ = 'posts'
+
+    #Columns
     id = Column(Integer, primary_key = True)
     header = Column(String, nullable = False)
     content = Column(Text, nullable = False)
@@ -21,6 +26,7 @@ class Posts(Base):
     is_deleted = Column(Boolean, nullable = False)
     author = Column(String, nullable = False)
 
+    #Relationships
     categories = relationship('Categories',
                               secondary = posts_to_categories_table,
                               lazy = 'joined'
@@ -35,6 +41,7 @@ class Posts(Base):
         self.is_deleted = False
 
     def toDict(self):
+        '''Returns object as dictionary'''
         ctgs = []
         for c in self.categories:
             ctgs.append(c.category)
@@ -62,10 +69,14 @@ class Posts(Base):
         return result
 
 class Categories(Base):
+    '''Table categories'''
     __tablename__ = 'categories'
+
+    #Columns
     id = Column(Integer, primary_key = True)
     category = Column(String, nullable = False)
 
+    #Relationships
     posts = relationship('Posts',
                          secondary = posts_to_categories_table,
                          )
@@ -74,6 +85,7 @@ class Categories(Base):
         self.category = category
 
     def toDict(self):
+        '''Returns object as dictionary'''
         return {
             'id' : self.id,
             'category' : self.category
