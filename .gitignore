@@ -45,8 +45,16 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Custom
 connect_str.txt
 TODO.txt
 __pycache__/
 run.bat
-run.bat
+
+# Venv
+bin/
+include/
+lib/
+share/
+pyvenv.cfg
