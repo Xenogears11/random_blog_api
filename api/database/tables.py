@@ -31,12 +31,14 @@ class Posts(Base):
                               secondary = posts_to_categories_table,
                               lazy = 'joined'
                              )
+    author = relationship('Users', uselist = False, back_populates = 'posts', lazy = 'joined')
 
-    def __init__(self, header = None, content = None, author = None, id = None):
+    def __init__(self, header = None, content = None, id = None, author_id = None):
+        self.id = id
         self.header = header
         self.content = content
         self.creation_date = datetime.now().replace(microsecond=0).isoformat(' ')
-        self.author = author
+        self.author_id = author_id
         self.is_deleted = False
 
     def toDict(self):
@@ -45,6 +47,13 @@ class Posts(Base):
         for c in self.categories:
             ctgs.append(c.category)
 
+        #dirty hack
+        if self.author == None:
+            author = None
+        else:
+            author = self.author.username
+
+
         result = {
             'id' : self.id,
             'header' : self.header,
@@ -52,7 +61,8 @@ class Posts(Base):
             'creation_date' : None,
             'modification_date' : None,
             'deletion_date' : None,
-            'author' : self.author,
+            'author_id' : self.author_id,
+            'author' : author,
             'categories' : ctgs
         }
 
@@ -102,7 +112,7 @@ class Users(Base):
     creation_date = Column(DateTime, nullable = False)
 
     #Relationships
-    posts = relationship('Posts')
+    posts = relationship('Posts', back_populates = 'author')
 
     def __init__(self, username = None, password = None, id = None):
         self.username = username

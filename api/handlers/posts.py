@@ -33,14 +33,14 @@ class PostsHandler(RequestHandler):
         #get arguments
         header = self.get_argument('header')
         content = self.get_argument('content')
-        author =  self.get_argument('author')
+        author_id = self.get_argument('author_id')
         categories = self.get_arguments('categories')
 
         #add new post
         if not categories:
             self.send_error(400)
         else:
-            post = Posts(header, content, author)
+            post = Posts(header, content, author_id)
             id = QueryPosts.add(post, categories)
             self.write({'id':id})
 
@@ -102,17 +102,17 @@ class PostsHandler(RequestHandler):
         #get arguments
         header = self.get_argument('header', default = None)
         content = self.get_argument('content', default = None)
-        author =  self.get_argument('author', default = None)
         categories = self.get_arguments('categories')
+        print(post_id)
 
         #create new post object
-        post = Posts(header, content, author, post_id)
+        post = Posts(header = header, content = content,id = post_id)
 
         #update post
-        try:
-            QueryPosts.update(post, categories)
-        except:
-            self.send_error(400)
+        #try:
+        QueryPosts.update(post, categories)
+        #except:
+            #self.send_error(400)
 
 
     def delete(self, post_id = None):

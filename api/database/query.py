@@ -212,9 +212,6 @@ class QueryPosts():
         if new_post.content != None:
             post.content = new_post.content
 
-        if new_post.author != None:
-            post.author = new_post.author
-
         if categories:
             post.categories.clear()
             for c in categories:
