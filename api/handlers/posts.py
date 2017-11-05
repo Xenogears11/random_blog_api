@@ -135,20 +135,3 @@ class PostsRestoreHandler(RequestHandler):
             QueryPosts.restore(id)
         except:
             self.send_error(400)
-
-class PostsCustomHandler(RequestHandler):
-    'Custom requests to posts table.(not used)'
-    def get(self):
-        quantity = self.get_argument('quantity', default = None)
-        from_id = self.get_argument('from_id', default = None)
-
-        try:
-            result = QueryPosts.get_custom(quantity)
-        except:
-            self.send_error(404)
-
-        posts = []
-        for post in result:
-            posts.append(post.toDict())
-
-        self.write({'posts' : posts})

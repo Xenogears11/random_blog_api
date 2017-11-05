@@ -1,6 +1,6 @@
 import tornado.ioloop
 import tornado.web
-from handlers import posts, categories, blog
+from handlers import posts, categories, users, blog, auth
 from tornado.log import enable_pretty_logging
 
 class MainHandler(tornado.web.RequestHandler):
@@ -14,12 +14,14 @@ def make_app():
         (r'/posts', posts.PostsHandler),
         (r'/posts/(\d+)', posts.PostsHandler),
         (r'/posts/(\d+)/restore', posts.PostsRestoreHandler),
-        #(r'/posts/custom', posts.PostsCustomHandler),
         (r'/categories', categories.CategoriesHandler),
         (r'/categories/(\d+)', categories.CategoriesHandler),
         (r'/blog/home', blog.HomeHandler),
         (r'/blog/category/(\d+)', blog.CategoryHandler),
-        (r'/blog/edit_post/(\d+)', blog.PostEditHandler)
+        (r'/blog/edit_post/(\d+)', blog.PostEditHandler),
+        (r'/users', users.UsersHandler),
+        (r'/users/(\d+)', users.UsersHandler),
+        (r'/auth', auth.AuthHandler)
     ], debug = True)
 
 
