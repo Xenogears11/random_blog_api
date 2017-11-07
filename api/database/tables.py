@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from database.database import Base
 
-#Association table
+#Association table posts_to_categories
 posts_to_categories_table = Table('posts_to_categories', Base.metadata,
     Column('post_id', Integer, ForeignKey('posts.id')),
     Column('category_id', Integer, ForeignKey('categories.id'))
@@ -24,20 +24,21 @@ class Posts(Base):
     modification_date = Column(DateTime, nullable = True)
     deletion_date = Column(DateTime, nullable = True)
     is_deleted = Column(Boolean, nullable = False)
-    author = Column(String, nullable = False)
+    author_id = Column(Integer, ForeignKey('users.id'), nullable = True)
 
     #Relationships
     categories = relationship('Categories',
                               secondary = posts_to_categories_table,
                               lazy = 'joined'
                              )
+    author = relationship('Users', uselist = False, back_populates = 'posts', lazy = 'joined')
 
-    def __init__(self, header = None, content = None, author = None, id = None):
+    def __init__(self, header = None, content = None, id = None, author_id = None):
         self.id = id
         self.header = header
         self.content = content
         self.creation_date = datetime.now().replace(microsecond=0).isoformat(' ')
-        self.author = author
+        self.author_id = author_id
         self.is_deleted = False
 
     def toDict(self):
@@ -46,6 +47,13 @@ class Posts(Base):
         for c in self.categories:
             ctgs.append(c.category)
 
+        #dirty hack
+        if self.author == None:
+            author = None
+        else:
+            author = self.author.username
+
+
         result = {
             'id' : self.id,
             'header' : self.header,
@@ -53,7 +61,8 @@ class Posts(Base):
             'creation_date' : None,
             'modification_date' : None,
             'deletion_date' : None,
-            'author' : self.author,
+            'author_id' : self.author_id,
+            'author' : author,
             'categories' : ctgs
         }
 
@@ -90,3 +99,37 @@ class Categories(Base):
             'id' : self.id,
             'category' : self.category
         }
+
+class Users(Base):
+    '''Table users'''
+    __tablename__ = 'users'
+
+    #Columns
+    id = Column(Integer, primary_key = True)
+    username = Column(String, nullable = False)
+    password = Column(String, nullable = False)
+    is_admin = Column(Boolean, nullable = False)
+    creation_date = Column(DateTime, nullable = False)
+
+    #Relationships
+    posts = relationship('Posts', back_populates = 'author')
+
+    def __init__(self, username = None, password = None, id = None):
+        self.username = username
+        self.password = password
+        self.is_admin = False
+        self.creation_date = datetime.now().replace(microsecond=0).isoformat(' ')
+
+    def toDict(self):
+        '''Return object as dictionary'''
+        result = {
+            'id' : self.id,
+            'username' : self.username,
+            'is_admin' : self.is_admin,
+            'creation_date' : None
+        }
+
+        if self.creation_date != None:
+            result['creation_date'] = self.creation_date.strftime('%d %B %Y - %H:%M')
+
+        return result

@@ -6,9 +6,9 @@ QueryCategories - queries to categories tables
 '''
 
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, load_only
 from database.database import DBSession
-from database.tables import Posts, Categories, posts_to_categories_table
+from database.tables import Posts, Categories, posts_to_categories_table, Users
 from datetime import datetime
 
 class QueryPosts():
@@ -19,6 +19,7 @@ class QueryPosts():
     get_all -- return list of all posts
     get_all_by_category -- return list of all posts by category
     get -- return post by id
+    get_author -- return author id by post's id
     get_custom -- return list of posts by custom rules
     get_custom_by_category -- return list of posts in a category by custom rules
     update -- update post
@@ -83,6 +84,15 @@ class QueryPosts():
         session.close()
         return post
 
+    def get_author(id):
+        '''Return author id by post's id.'''
+        session = DBSession()
+
+        post = session.query(Posts).filter(Posts.id == id).\
+               options(load_only('author_id')).one()
+
+        session.close()
+        return post.author_id
 
     def get_custom(quantity, from_id = None, newer = False):
         '''Return list of posts by custom rules.
@@ -212,9 +222,6 @@ class QueryPosts():
         if new_post.content != None:
             post.content = new_post.content
 
-        if new_post.author != None:
-            post.author = new_post.author
-
         if categories:
             post.categories.clear()
             for c in categories:
@@ -282,7 +289,6 @@ class QueryCategories():
         session.commit()
         session.close()
 
-
     def get(id):
         '''Return category by id'''
         session = DBSession()
@@ -323,3 +329,42 @@ class QueryCategories():
             'first_id' : first_id,
             'last_id' : last_id
         }
+
+class QueryUsers():
+    '''Queries to users table.
+
+    Methods:
+    '''
+
+    def add(user):
+        '''Add new user'''
+        session = DBSession()
+
+        session.add(user)
+
+        session.commit()
+        session.close()
+
+    def get(id):
+        '''Get user by id'''
+        session = DBSession()
+
+        user = session.query(Users).get(id)
+
+        session.close()
+        return user
+
+    def validate(username, password):
+        '''Validate user.
+        If successfull - returns user's id, else - None.
+        '''
+        session = DBSession()
+
+        user = session.query(Users).filter(Users.username == username).first()
+
+        session.close()
+
+        if user.password != None and user.password == password:
+            return user.id
+        else:
+            return None

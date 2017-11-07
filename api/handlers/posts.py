@@ -33,14 +33,14 @@ class PostsHandler(RequestHandler):
         #get arguments
         header = self.get_argument('header')
         content = self.get_argument('content')
-        author =  self.get_argument('author')
+        author_id = self.get_argument('author_id')
         categories = self.get_arguments('categories')
 
         #add new post
         if not categories:
             self.send_error(400)
         else:
-            post = Posts(header, content, author)
+            post = Posts(header, content, author_id)
             id = QueryPosts.add(post, categories)
             self.write({'id':id})
 
@@ -102,11 +102,11 @@ class PostsHandler(RequestHandler):
         #get arguments
         header = self.get_argument('header', default = None)
         content = self.get_argument('content', default = None)
-        author =  self.get_argument('author', default = None)
         categories = self.get_arguments('categories')
+        print(post_id)
 
         #create new post object
-        post = Posts(header, content, author, post_id)
+        post = Posts(header = header, content = content,id = post_id)
 
         #update post
         try:
@@ -136,19 +136,13 @@ class PostsRestoreHandler(RequestHandler):
         except:
             self.send_error(400)
 
-class PostsCustomHandler(RequestHandler):
-    'Custom requests to posts table.(not used)'
-    def get(self):
-        quantity = self.get_argument('quantity', default = None)
-        from_id = self.get_argument('from_id', default = None)
+class PostsAuthorHandler(RequestHandler):
+    '''Return author id by post's id.'''
 
+    def get(self, id = None):
+        '''Return author id'''
         try:
-            result = QueryPosts.get_custom(quantity)
+            author_id = QueryPosts.get_author(id)
+            self.write({'author_id' : author_id})
         except:
-            self.send_error(404)
-
-        posts = []
-        for post in result:
-            posts.append(post.toDict())
-
-        self.write({'posts' : posts})
+            self.send_error(400)
