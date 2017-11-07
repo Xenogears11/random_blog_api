@@ -109,10 +109,10 @@ class PostsHandler(RequestHandler):
         post = Posts(header = header, content = content,id = post_id)
 
         #update post
-        #try:
-        QueryPosts.update(post, categories)
-        #except:
-            #self.send_error(400)
+        try:
+            QueryPosts.update(post, categories)
+        except:
+            self.send_error(400)
 
 
     def delete(self, post_id = None):
@@ -133,5 +133,16 @@ class PostsRestoreHandler(RequestHandler):
         '''Restore a post by id.'''
         try:
             QueryPosts.restore(id)
+        except:
+            self.send_error(400)
+
+class PostsAuthorHandler(RequestHandler):
+    '''Return author id by post's id.'''
+
+    def get(self, id = None):
+        '''Return author id'''
+        try:
+            author_id = QueryPosts.get_author(id)
+            self.write({'author_id' : author_id})
         except:
             self.send_error(400)

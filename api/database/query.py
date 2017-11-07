@@ -6,7 +6,7 @@ QueryCategories - queries to categories tables
 '''
 
 from sqlalchemy import Integer, String, Text, DateTime, Boolean
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, load_only
 from database.database import DBSession
 from database.tables import Posts, Categories, posts_to_categories_table, Users
 from datetime import datetime
@@ -19,6 +19,7 @@ class QueryPosts():
     get_all -- return list of all posts
     get_all_by_category -- return list of all posts by category
     get -- return post by id
+    get_author -- return author id by post's id
     get_custom -- return list of posts by custom rules
     get_custom_by_category -- return list of posts in a category by custom rules
     update -- update post
@@ -83,6 +84,15 @@ class QueryPosts():
         session.close()
         return post
 
+    def get_author(id):
+        '''Return author id by post's id.'''
+        session = DBSession()
+
+        post = session.query(Posts).filter(Posts.id == id).\
+               options(load_only('author_id')).one()
+
+        session.close()
+        return post.author_id
 
     def get_custom(quantity, from_id = None, newer = False):
         '''Return list of posts by custom rules.
