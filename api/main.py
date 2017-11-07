@@ -19,16 +19,12 @@ def make_app():
         (r'/categories/(\d+)', categories.CategoriesHandler),
         (r'/blog/home', blog.HomeHandler),
         (r'/blog/category/(\d+)', blog.CategoryHandler),
-<<<<<<< HEAD
-        (r'/blog/edit_post/(\d+)', blog.PostEditHandler)
-    ], debug = False)
-=======
         (r'/blog/edit_post/(\d+)', blog.PostEditHandler),
         (r'/users', users.UsersHandler),
         (r'/users/(\d+)', users.UsersHandler),
         (r'/auth', blog.AuthHandler),
-    ], debug = True)
->>>>>>> refs/heads/dev
+    ], debug = False)
+
 
 
 #run app
