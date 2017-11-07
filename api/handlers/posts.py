@@ -40,7 +40,7 @@ class PostsHandler(RequestHandler):
         if not categories:
             self.send_error(400)
         else:
-            post = Posts(header, content, author_id)
+            post = Posts(header = header, content = content, author_id = author_id)
             id = QueryPosts.add(post, categories)
             self.write({'id':id})
 
