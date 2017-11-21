@@ -1,45 +1,46 @@
-'''Handlers for categories table.'''
+"""Handlers for categories table."""
 
 from tornado.web import RequestHandler
-from database.tables import Users, Posts, Categories
-from database.query import QueryPosts, QueryCategories, QueryUsers
+from database.tables import Users
+from database import query_users
+
 
 class UsersHandler(RequestHandler):
-    '''Handler for users table.
+    """Handler for users table.
 
     Methods:
     - post
     - get
-    '''
+    """
 
     def post(self):
-        '''Add new user.
+        """Add new user.
 
         Request arguments:
         username
         password
-        '''
+        """
 
-        #get arguments
+        # get arguments
         username = self.get_argument('username')
         password = self.get_argument('password')
 
         try:
-            #add user
-            user = Users(username = username, password = password)
-            QueryUsers.add(user)
+            # add user
+            user = Users(username=username, password=password)
+            query_users.add(user)
         except:
             self.send_error(404)
 
-    def get(self, id = None):
-        '''Get user.
+    def get(self, id=None):
+        """Get user.
 
         Arguments:
         id
-        '''
+        """
 
         try:
-            user = QueryUsers.get(id)
-            self.write(user.toDict())
+            user = query_users.get(id)
+            self.write(user.to_dict())
         except:
             self.send_error(404)

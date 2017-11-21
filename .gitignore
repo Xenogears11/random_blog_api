@@ -60,3 +60,5 @@ share/
 pyvenv.cfg
 
 \.idea/workspace\.xml
+
+\.idea/

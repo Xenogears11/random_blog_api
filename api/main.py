@@ -3,11 +3,13 @@ import tornado.web
 from handlers import posts, categories, users, blog
 from tornado.log import enable_pretty_logging
 
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.write(help_page)
 
-#router
+
+# router
 def make_app():
     return tornado.web.Application([
         (r'/', MainHandler),
@@ -23,13 +25,12 @@ def make_app():
         (r'/users', users.UsersHandler),
         (r'/users/(\d+)', users.UsersHandler),
         (r'/auth', blog.AuthHandler),
-    ], debug = False)
+    ], debug=False)
 
 
-
-#run app
+# run app
 if __name__ == "__main__":
-    with open('res/help.txt', 'r', encoding = 'utf-8') as file:
+    with open('res/help.txt', 'r', encoding='utf-8') as file:
         help_page = file.read()
     enable_pretty_logging()
     app = make_app()
