@@ -58,3 +58,5 @@ include/
 lib/
 share/
 pyvenv.cfg
+
+\.idea/workspace\.xml
